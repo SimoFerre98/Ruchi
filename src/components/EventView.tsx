@@ -14,15 +14,15 @@ export default function EventView({ eventId }: Props) {
 
     return (
         <div>
-            <div className="flex bg-white rounded-t-xl border-b border-gray-200">
+            <div className="flex bg-white dark:bg-gray-900 rounded-t-xl border-b border-gray-200 dark:border-gray-800 overflow-x-auto scrolbar-hide">
                 <button
                     onClick={() => setActiveTab('shopping')}
                     className={cn(
-                        "flex-1 py-4 text-center font-medium text-sm flex items-center justify-center gap-2 transition-colors relative",
-                        activeTab === 'shopping' ? "text-indigo-600" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-tl-xl"
+                        "flex-1 py-3 md:py-4 px-2 min-w-[100px] text-center font-medium text-xs md:text-sm flex items-center justify-center gap-1.5 md:gap-2 transition-colors relative whitespace-nowrap",
+                        activeTab === 'shopping' ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-tl-xl"
                     )}
                 >
-                    <ShoppingCart className="w-4 h-4" />
+                    <ShoppingCart className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     Lista Spesa
                     {activeTab === 'shopping' && (
                         <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600" />
@@ -31,11 +31,11 @@ export default function EventView({ eventId }: Props) {
                 <button
                     onClick={() => setActiveTab('expenses')}
                     className={cn(
-                        "flex-1 py-4 text-center font-medium text-sm flex items-center justify-center gap-2 transition-colors relative",
-                        activeTab === 'expenses' ? "text-indigo-600" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-tr-xl"
+                        "flex-1 py-3 md:py-4 px-2 min-w-[100px] text-center font-medium text-xs md:text-sm flex items-center justify-center gap-1.5 md:gap-2 transition-colors relative whitespace-nowrap",
+                        activeTab === 'expenses' ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
                     )}
                 >
-                    <Wallet className="w-4 h-4" />
+                    <Wallet className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     Spese & Conti
                     {activeTab === 'expenses' && (
                         <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600" />
@@ -44,11 +44,11 @@ export default function EventView({ eventId }: Props) {
                 <button
                     onClick={() => setActiveTab('settings')}
                     className={cn(
-                        "flex-1 py-4 text-center font-medium text-sm flex items-center justify-center gap-2 transition-colors relative",
-                        activeTab === 'settings' ? "text-indigo-600" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-tr-xl"
+                        "flex-1 py-3 md:py-4 px-2 min-w-[100px] text-center font-medium text-xs md:text-sm flex items-center justify-center gap-1.5 md:gap-2 transition-colors relative whitespace-nowrap",
+                        activeTab === 'settings' ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-tr-xl"
                     )}
                 >
-                    <Settings className="w-4 h-4" />
+                    <Settings className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     Impostazioni
                     {activeTab === 'settings' && (
                         <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600" />
@@ -56,7 +56,7 @@ export default function EventView({ eventId }: Props) {
                 </button>
             </div>
 
-            <div className="bg-white rounded-b-xl shadow-sm border border-t-0 border-gray-100 p-6 min-h-[500px]">
+            <div className="bg-white dark:bg-gray-900 rounded-b-xl shadow-sm border border-t-0 border-gray-100 dark:border-gray-800 p-4 md:p-6 min-h-[500px]">
                 {activeTab === 'shopping' ? (
                     <ShoppingList eventId={eventId} />
                 ) : activeTab === 'expenses' ? (

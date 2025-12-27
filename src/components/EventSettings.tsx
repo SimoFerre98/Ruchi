@@ -84,40 +84,40 @@ export default function EventSettings({ eventId }: Props) {
         <div className="max-w-2xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4">
 
             {/* Invite Code Section */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <Settings className="w-5 h-5 text-indigo-600" />
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                    <Settings className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                     Codice Invito
                 </h3>
-                <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <code className="text-2xl font-mono font-bold tracking-widest text-indigo-600 flex-1 text-center">
+                <div className="flex items-center gap-4 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <code className="text-2xl font-mono font-bold tracking-widest text-indigo-600 dark:text-indigo-400 flex-1 text-center">
                         {inviteCode}
                     </code>
                     <button
                         onClick={copyCode}
-                        className="p-2 hover:bg-white rounded-lg transition-colors text-gray-500 hover:text-indigo-600 border border-transparent hover:border-gray-200"
+                        className="p-2 hover:bg-white dark:hover:bg-gray-700 rounded-lg transition-colors text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 border border-transparent hover:border-gray-200 dark:hover:border-gray-600"
                         title="Copia codice"
                     >
                         <Copy className="w-5 h-5" />
                     </button>
                 </div>
-                <p className="text-sm text-gray-500 mt-2 text-center">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 text-center">
                     Condividi questo codice con i tuoi amici per farli entrare nell'evento.
                 </p>
             </div>
 
             {/* Participants List */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <Users className="w-5 h-5 text-indigo-600" />
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                    <Users className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                     Partecipanti ({participants.length})
                 </h3>
 
                 <div className="space-y-3">
                     {participants.map((participant) => (
-                        <div key={participant.user_id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
+                        <div key={participant.user_id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border border-transparent hover:border-gray-100 dark:hover:border-gray-700">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold overflow-hidden border-2 border-white shadow-sm">
+                                <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold overflow-hidden border-2 border-white dark:border-gray-800 shadow-sm">
                                     {participant.avatar_url ? (
                                         <img src={participant.avatar_url} alt={participant.username} className="w-full h-full object-cover" />
                                     ) : (
@@ -125,16 +125,16 @@ export default function EventSettings({ eventId }: Props) {
                                     )}
                                 </div>
                                 <div>
-                                    <p className="font-medium text-gray-900 flex items-center gap-2">
+                                    <p className="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
                                         {participant.username}
                                         {participant.user_id === currentUser?.id && (
-                                            <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full border border-indigo-100">Io</span>
+                                            <span className="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-100 dark:border-indigo-800">Io</span>
                                         )}
                                         {participant.role === 'admin' && (
-                                            <Shield className="w-3 h-3 text-amber-500" title="Admin" />
+                                            <span title="Admin"><Shield className="w-3 h-3 text-amber-500" /></span>
                                         )}
                                     </p>
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
                                         Membro dal {new Date(participant.joined_at).toLocaleDateString()}
                                     </p>
                                 </div>

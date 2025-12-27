@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Trash2, Plus, Check, ShoppingCart } from 'lucide-react';
+import { Trash2, Plus, Check, ShoppingCart, Loader2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface ShoppingItem {
@@ -24,6 +24,7 @@ export default function ShoppingList({ eventId }: Props) {
     const [newItemQty, setNewItemQty] = useState('');
     const [newItemNotes, setNewItemNotes] = useState('');
     const [loading, setLoading] = useState(true);
+    const [adding, setAdding] = useState(false);
 
     useEffect(() => {
         fetchItems();
@@ -84,8 +85,9 @@ export default function ShoppingList({ eventId }: Props) {
 
     async function addItem(e: React.FormEvent) {
         e.preventDefault();
-        if (!newItemName.trim()) return;
+        if (!newItemName.trim() || adding) return; // Prevent double submit
 
+        setAdding(true);
         const tempId = crypto.randomUUID();
         const optimisticItem: ShoppingItem = {
             id: tempId,
@@ -122,6 +124,8 @@ export default function ShoppingList({ eventId }: Props) {
             alert('Errore aggiunta oggetto.');
             // Revert optimistic add
             setItems(prev => prev.filter(i => i.id !== tempId));
+        } finally {
+            setAdding(false);
         }
     }
 
@@ -176,42 +180,44 @@ export default function ShoppingList({ eventId }: Props) {
                     <div
                         key={item.id}
                         className={cn(
-                            "flex items-center justify-between p-3 rounded-lg border transition-all duration-200",
+                            "flex items-center gap-3 p-4 rounded-xl transition-all group animate-in slide-in-from-bottom-2 duration-300",
                             item.is_bought
-                                ? "bg-gray-50 border-gray-100 opacity-60"
-                                : "bg-white border-gray-200 hover:border-indigo-200"
+                                ? "bg-gray-50/80 dark:bg-gray-800/50"
+                                : "bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-800"
                         )}
                     >
-                        <div className="flex items-center gap-3">
-                            <button
-                                onClick={() => toggleBought(item)}
-                                className={cn(
-                                    "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors",
-                                    item.is_bought
-                                        ? "bg-green-500 border-green-500 text-white"
-                                        : "border-gray-300 hover:border-indigo-400"
-                                )}
-                            >
-                                {item.is_bought && <Check className="w-3.5 h-3.5" />}
-                            </button>
-                            <div className={item.is_bought ? "line-through text-gray-400" : ""}>
-                                <div className="flex items-center">
-                                    <span className="font-medium">{item.item_name}</span>
-                                    {item.quantity && (
-                                        <span className="ml-2 text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                                            {item.quantity}
-                                        </span>
-                                    )}
-                                </div>
-                                {item.notes && (
-                                    <p className="text-xs text-gray-500 mt-0.5">{item.notes}</p>
-                                )}
-                            </div>
+                        <button
+                            onClick={() => toggleBought(item)} // Changed from toggleItem(item.id, item.is_bought)
+                            className={cn(
+                                "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors flex-shrink-0",
+                                item.is_bought
+                                    ? "bg-green-500 border-green-500 text-white"
+                                    : "border-gray-300 dark:border-gray-600 text-transparent hover:border-green-500"
+                            )}
+                        >
+                            <Check className="w-3.5 h-3.5" />
+                        </button>
+
+                        <div className="flex-1 min-w-0">
+                            <span className={cn(
+                                "block font-medium truncate",
+                                item.is_bought ? "text-gray-400 dark:text-gray-500 line-through" : "text-gray-700 dark:text-gray-200"
+                            )}>
+                                {item.item_name}
+                            </span>
+                            {item.quantity && (
+                                <span className="ml-2 text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">
+                                    {item.quantity}
+                                </span>
+                            )}
+                            {item.notes && (
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{item.notes}</p>
+                            )}
                         </div>
 
                         <button
                             onClick={() => deleteItem(item.id)}
-                            className="text-gray-300 hover:text-red-500 p-2"
+                            className="text-gray-300 hover:text-red-500 p-2 opacity-0 group-hover:opacity-100 transition-opacity" // Added group-hover for delete button
                         >
                             <Trash2 className="w-4 h-4" />
                         </button>
@@ -225,38 +231,23 @@ export default function ShoppingList({ eventId }: Props) {
                 )}
             </div>
 
-            <form onSubmit={addItem} className="flex flex-col gap-2 border-t pt-4">
-                <div className="flex gap-2">
+            <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-2 border-t pt-4 border-gray-200 dark:border-gray-700"> {/* Changed form onSubmit */}
+                {/* Removed original newItemName, newItemQty, newItemNotes inputs */}
+                <div className="flex gap-2 mb-8">
                     <input
                         type="text"
-                        placeholder="Cosa serve?"
                         value={newItemName}
                         onChange={(e) => setNewItemName(e.target.value)}
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Qt."
-                        value={newItemQty}
-                        onChange={(e) => setNewItemQty(e.target.value)}
-                        className="w-20 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-                    />
-                </div>
-                <div className="flex gap-2">
-                    <input
-                        type="text"
-                        placeholder="Note (opzionale)"
-                        value={newItemNotes}
-                        onChange={(e) => setNewItemNotes(e.target.value)}
-                        className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                        placeholder="Aggiungi prodotto..."
+                        className="flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-800 border-none rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white placeholder-gray-400"
+                        onKeyDown={(e) => e.key === 'Enter' && addItem()}
                     />
                     <button
-                        type="submit"
-                        disabled={!newItemName.trim()}
-                        className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2 whitespace-nowrap"
+                        onClick={addItem}
+                        disabled={!newItemName.trim() || adding}
+                        className="bg-indigo-600 text-white p-3 rounded-xl hover:bg-indigo-700 transition disabled:opacity-50 shadow-sm shadow-indigo-200 dark:shadow-none"
                     >
-                        <Plus className="w-5 h-5" />
-                        Aggiungi
+                        {adding ? <Loader2 className="w-6 h-6 animate-spin" /> : <Plus className="w-6 h-6" />}
                     </button>
                 </div>
             </form>
