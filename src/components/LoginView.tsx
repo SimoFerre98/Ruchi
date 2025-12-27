@@ -37,6 +37,7 @@ export default function LoginView() {
         <div className="min-h-[80vh] flex items-center justify-center px-4">
             <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-gray-100 p-8 space-y-8">
                 <div className="text-center space-y-2">
+                    <img src="/logo.png" alt="Ruchi Logo" className="w-16 h-16 mx-auto mb-4 rounded-xl shadow-lg shadow-indigo-100 dark:shadow-none" />
                     <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Bentornato! 👋</h1>
                     <p className="text-gray-500">Accedi per gestire le tue spese ed eventi.</p>
                 </div>

@@ -275,13 +275,13 @@ export default function ExpenseTracker({ eventId }: Props) {
                 {expenses.map((expense) => {
                     const payer = participants.find(p => p.user_id === expense.payer_id);
                     return (
-                        <div key={expense.id} className="flex items-center justify-between p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-indigo-100 dark:hover:border-indigo-900 transition-colors">
+                        <div key={expense.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-indigo-100 dark:hover:border-indigo-900 transition-colors gap-3 sm:gap-4">
                             <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-sm">
+                                <div className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-sm flex-shrink-0">
                                     {payer?.username?.charAt(0).toUpperCase() || '?'}
                                 </div>
-                                <div>
-                                    <p className="font-medium text-gray-900 dark:text-white capitalize">{expense.description}</p>
+                                <div className="min-w-0">
+                                    <p className="font-medium text-gray-900 dark:text-white capitalize truncate">{expense.description}</p>
                                     <p className="text-xs text-gray-500 dark:text-gray-400">
                                         Pagato da <span className="font-semibold text-gray-700 dark:text-gray-300">{payer?.username || 'Sconosciuto'}</span>
                                         {' • '}
@@ -289,7 +289,7 @@ export default function ExpenseTracker({ eventId }: Props) {
                                     </p>
                                 </div>
                             </div>
-                            <div className="text-right">
+                            <div className="text-right sm:text-right pl-14 sm:pl-0">
                                 <p className="font-bold text-gray-900 dark:text-white">€ {expense.amount.toFixed(2)}</p>
                             </div>
                         </div>

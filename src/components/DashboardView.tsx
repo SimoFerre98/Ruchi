@@ -147,9 +147,12 @@ export default function DashboardView() {
     return (
         <div className="max-w-6xl mx-auto px-4 py-6 md:p-8 space-y-6 md:space-y-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">I tuoi Eventi</h1>
-                    <p className="text-sm md:text-base text-gray-500 dark:text-gray-400">Gestisci le tue spese condivise</p>
+                <div className="flex items-center gap-4">
+                    <img src="/logo.png" alt="Ruchi" className="w-12 h-12 rounded-xl shadow-sm" />
+                    <div>
+                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">I tuoi Eventi</h1>
+                        <p className="text-sm md:text-base text-gray-500 dark:text-gray-400">Gestisci le tue spese condivise</p>
+                    </div>
                 </div>
                 <div className="flex items-center gap-3 self-end md:self-auto">
                     <a

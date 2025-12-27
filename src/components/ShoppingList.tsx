@@ -233,21 +233,22 @@ export default function ShoppingList({ eventId }: Props) {
 
             <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-2 border-t pt-4 border-gray-200 dark:border-gray-700"> {/* Changed form onSubmit */}
                 {/* Removed original newItemName, newItemQty, newItemNotes inputs */}
-                <div className="flex gap-2 mb-8">
+                <div className="flex flex-col md:flex-row gap-2 mb-4 md:mb-0">
                     <input
                         type="text"
                         value={newItemName}
                         onChange={(e) => setNewItemName(e.target.value)}
                         placeholder="Aggiungi prodotto..."
                         className="flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-800 border-none rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white placeholder-gray-400"
-                        onKeyDown={(e) => e.key === 'Enter' && addItem()}
+                        onKeyDown={(e) => e.key === 'Enter' && addItem(e)}
                     />
                     <button
                         onClick={addItem}
                         disabled={!newItemName.trim() || adding}
-                        className="bg-indigo-600 text-white p-3 rounded-xl hover:bg-indigo-700 transition disabled:opacity-50 shadow-sm shadow-indigo-200 dark:shadow-none"
+                        className="bg-indigo-600 text-white p-3 rounded-xl hover:bg-indigo-700 transition disabled:opacity-50 shadow-sm shadow-indigo-200 dark:shadow-none flex items-center justify-center"
                     >
                         {adding ? <Loader2 className="w-6 h-6 animate-spin" /> : <Plus className="w-6 h-6" />}
+                        <span className="md:hidden ml-2 font-medium">Aggiungi</span>
                     </button>
                 </div>
             </form>

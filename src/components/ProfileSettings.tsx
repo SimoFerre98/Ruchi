@@ -93,18 +93,18 @@ export default function ProfileSettings() {
 
     return (
         <div className="max-w-2xl mx-auto p-6 space-y-8 animate-in fade-in slide-in-from-bottom-4">
-            <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-4">
+            <div className="flex items-center justify-between mb-6 md:mb-8">
+                <div className="flex items-center gap-3 md:gap-4">
                     <a href="/dashboard" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors text-gray-500 dark:text-gray-400">
-                        <ArrowLeft className="w-6 h-6" />
+                        <ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
                     </a>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Il tuo Profilo</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">Il tuo Profilo</h1>
                 </div>
                 <button
                     onClick={handleLogout}
-                    className="flex items-center gap-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-4 py-2 rounded-lg transition-colors font-medium border border-transparent hover:border-red-100 dark:hover:border-red-900/30"
+                    className="flex items-center gap-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 md:px-4 py-2 rounded-lg transition-colors font-medium border border-transparent hover:border-red-100 dark:hover:border-red-900/30 text-sm md:text-base"
                 >
-                    <LogOut className="w-5 h-5" />
+                    <LogOut className="w-4 h-4 md:w-5 md:h-5" />
                     <span className="hidden sm:inline">Esci</span>
                 </button>
             </div>

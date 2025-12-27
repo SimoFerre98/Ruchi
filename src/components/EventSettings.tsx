@@ -116,25 +116,25 @@ export default function EventSettings({ eventId }: Props) {
                 <div className="space-y-3">
                     {participants.map((participant) => (
                         <div key={participant.user_id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border border-transparent hover:border-gray-100 dark:hover:border-gray-700">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold overflow-hidden border-2 border-white dark:border-gray-800 shadow-sm">
+                            <div className="flex items-center gap-3 min-w-0">
+                                <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold overflow-hidden border-2 border-white dark:border-gray-800 shadow-sm flex-shrink-0">
                                     {participant.avatar_url ? (
                                         <img src={participant.avatar_url} alt={participant.username} className="w-full h-full object-cover" />
                                     ) : (
                                         participant.username.charAt(0).toUpperCase()
                                     )}
                                 </div>
-                                <div>
+                                <div className="min-w-0">
                                     <p className="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                                        {participant.username}
+                                        <span className="truncate">{participant.username}</span>
                                         {participant.user_id === currentUser?.id && (
-                                            <span className="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-100 dark:border-indigo-800">Io</span>
+                                            <span className="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-100 dark:border-indigo-800 flex-shrink-0">Io</span>
                                         )}
                                         {participant.role === 'admin' && (
-                                            <span title="Admin"><Shield className="w-3 h-3 text-amber-500" /></span>
+                                            <span title="Admin" className="flex-shrink-0"><Shield className="w-3 h-3 text-amber-500" /></span>
                                         )}
                                     </p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                                         Membro dal {new Date(participant.joined_at).toLocaleDateString()}
                                     </p>
                                 </div>

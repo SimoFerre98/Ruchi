@@ -47,6 +47,7 @@ export default function SignupView() {
         <div className="min-h-[80vh] flex items-center justify-center px-4">
             <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-gray-100 p-8 space-y-8">
                 <div className="text-center space-y-2">
+                    <img src="/logo.png" alt="Ruchi Logo" className="w-16 h-16 mx-auto mb-4 rounded-xl shadow-lg shadow-indigo-100 dark:shadow-none" />
                     <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Crea Account ✨</h1>
                     <p className="text-gray-500">Unisciti a Ruchi e inizia a gestire le spese.</p>
                 </div>
