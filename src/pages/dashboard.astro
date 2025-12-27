@@ -1,0 +1,10 @@
+---
+import Layout from '../layouts/Layout.astro';
+import DashboardView from '../components/DashboardView';
+---
+
+<Layout title="Dashboard">
+	<div class="max-w-6xl mx-auto p-4">
+		<DashboardView client:load />
+	</div>
+</Layout>
