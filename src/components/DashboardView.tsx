@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Plus, Calendar, ArrowRight, Loader2 } from 'lucide-react';
+import { Plus, Grid, Calendar, LogOut, Search, UserPlus, ArrowRight, Loader2 } from 'lucide-react';
+import { cn } from '../lib/utils';
 
 interface Event {
     id: string;
@@ -14,7 +15,9 @@ export default function DashboardView() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isCreating, setIsCreating] = useState(false);
+    const [isJoining, setIsJoining] = useState(false);
     const [newEventTitle, setNewEventTitle] = useState('');
+    const [joinCode, setJoinCode] = useState('');
 
     useEffect(() => {
         fetchEvents();
@@ -108,36 +111,130 @@ export default function DashboardView() {
         }
     }
 
-    return (
-        <div>
-            <header className="flex justify-between items-center mb-8 py-4 border-b border-gray-100">
-                <h1 className="text-2xl font-bold text-gray-900">I tuoi Eventi</h1>
-                {/* Simple Inline Create Form for speed */}
-                <form onSubmit={createEvent} className="flex gap-2">
-                    <input
-                        type="text"
-                        placeholder="Nome nuovo evento..."
-                        className="px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
-                        value={newEventTitle}
-                        onChange={e => setNewEventTitle(e.target.value)}
-                    />
-                    <button
-                        type="submit"
-                        disabled={isCreating || !newEventTitle}
-                        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition flex items-center gap-2 disabled:opacity-50"
-                    >
-                        {isCreating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                        Crea
-                    </button>
-                </form>
-            </header>
+    async function handleJoinEvent(e: React.FormEvent) {
+        e.preventDefault();
+        if (!joinCode.trim()) return;
 
-            {loading ? (
-                <div className="p-12 text-center text-gray-500 flex flex-col items-center gap-4">
-                    <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
-                    <p>Caricamento eventi...</p>
+        try {
+            const user = await supabase.auth.getUser();
+            if (!user.data.user) throw new Error('Devi essere loggato');
+
+            const { data: eventId, error } = await supabase
+                .rpc('join_event_by_code', { _invite_code: joinCode });
+
+            if (error) throw error;
+
+            // Success
+            window.location.href = `/event/${eventId}`;
+        } catch (error: any) {
+            console.error("Error joining event:", error);
+            alert(`Errore: ${error.message}`);
+        }
+    }
+
+    async function handleLogout() {
+        await supabase.auth.signOut();
+        window.location.href = '/login';
+    }
+
+    if (loading) return (
+        <div className="p-12 text-center text-gray-500 flex flex-col items-center gap-4">
+            <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+            <p>Caricamento eventi...</p>
+        </div>
+    );
+
+    return (
+        <div className="max-w-6xl mx-auto p-6 space-y-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold text-gray-900">I tuoi Eventi</h1>
+                    <p className="text-gray-500">Gestisci le tue spese condivise</p>
                 </div>
-            ) : error ? (
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={handleLogout}
+                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Esci"
+                    >
+                        <LogOut className="w-5 h-5" />
+                    </button>
+                    <div className="flex gap-2">
+                        {isJoining ? (
+                            <form onSubmit={handleJoinEvent} className="flex gap-2 animate-in fade-in slide-in-from-right-4">
+                                <input
+                                    type="text"
+                                    placeholder="Codice invito..."
+                                    value={joinCode}
+                                    onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                                    className="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none uppercase text-sm"
+                                    autoFocus
+                                />
+                                <button
+                                    type="submit"
+                                    className="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-black transition text-sm font-medium"
+                                >
+                                    Entra
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsJoining(false)}
+                                    className="text-gray-500 hover:text-gray-700 px-2"
+                                >
+                                    ✕
+                                </button>
+                            </form>
+                        ) : (
+                            <button
+                                onClick={() => setIsJoining(true)}
+                                className="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 transition flex items-center gap-2 font-medium"
+                            >
+                                <UserPlus className="w-4 h-4" />
+                                Unisciti
+                            </button>
+                        )}
+
+                        {isCreating ? (
+                            <form onSubmit={createEvent} className="flex gap-2 animate-in fade-in slide-in-from-right-4">
+                                <input
+                                    type="text"
+                                    placeholder="Nome evento..."
+                                    value={newEventTitle}
+                                    onChange={(e) => setNewEventTitle(e.target.value)}
+                                    className="w-48 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    autoFocus
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={!newEventTitle.trim()}
+                                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition font-medium"
+                                >
+                                    Crea
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsCreating(false)}
+                                    className="text-gray-500 hover:text-gray-700 px-2"
+                                >
+                                    ✕
+                                </button>
+                            </form>
+                        ) : (
+                            !isJoining && (
+                                <button
+                                    onClick={() => setIsCreating(true)}
+                                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center gap-2 font-medium shadow-sm shadow-indigo-200"
+                                >
+                                    <Plus className="w-4 h-4" />
+                                    Nuovo Evento
+                                </button>
+                            )
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {error ? (
                 <div className="p-12 text-center text-red-500 bg-red-50 rounded-xl border border-red-100">
                     <p className="font-bold">Errore di connessione</p>
                     <p className="text-sm">{error}</p>

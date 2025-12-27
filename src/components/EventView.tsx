@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import ShoppingList from './ShoppingList';
 import ExpenseTracker from './ExpenseTracker';
-import { ShoppingCart, Wallet } from 'lucide-react';
+import EventSettings from './EventSettings';
+import { ShoppingCart, Wallet, Settings } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface Props {
@@ -9,7 +10,7 @@ interface Props {
 }
 
 export default function EventView({ eventId }: Props) {
-    const [activeTab, setActiveTab] = useState<'shopping' | 'expenses'>('shopping');
+    const [activeTab, setActiveTab] = useState<'shopping' | 'expenses' | 'settings'>('shopping');
 
     return (
         <div>
@@ -40,13 +41,28 @@ export default function EventView({ eventId }: Props) {
                         <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600" />
                     )}
                 </button>
+                <button
+                    onClick={() => setActiveTab('settings')}
+                    className={cn(
+                        "flex-1 py-4 text-center font-medium text-sm flex items-center justify-center gap-2 transition-colors relative",
+                        activeTab === 'settings' ? "text-indigo-600" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-tr-xl"
+                    )}
+                >
+                    <Settings className="w-4 h-4" />
+                    Impostazioni
+                    {activeTab === 'settings' && (
+                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600" />
+                    )}
+                </button>
             </div>
 
             <div className="bg-white rounded-b-xl shadow-sm border border-t-0 border-gray-100 p-6 min-h-[500px]">
                 {activeTab === 'shopping' ? (
                     <ShoppingList eventId={eventId} />
-                ) : (
+                ) : activeTab === 'expenses' ? (
                     <ExpenseTracker eventId={eventId} />
+                ) : (
+                    <EventSettings eventId={eventId} />
                 )}
             </div>
         </div>
