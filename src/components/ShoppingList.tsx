@@ -5,10 +5,13 @@ import { cn } from '../lib/utils';
 
 interface ShoppingItem {
     id: string;
+    event_id: string;
     item_name: string;
     quantity: string | null;
+    notes: string | null;
     is_bought: boolean;
     claimed_by: string | null;
+    expense_id: string | null;
 }
 
 interface Props {
@@ -19,6 +22,7 @@ export default function ShoppingList({ eventId }: Props) {
     const [items, setItems] = useState<ShoppingItem[]>([]);
     const [newItemName, setNewItemName] = useState('');
     const [newItemQty, setNewItemQty] = useState('');
+    const [newItemNotes, setNewItemNotes] = useState('');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -39,13 +43,17 @@ export default function ShoppingList({ eventId }: Props) {
                     // Simple approach: refetch or optimistic update. 
                     // For robustness/simplicity in this prototype, let's refetch or handle specific events.
                     // To ensure we don't lose order or state, handling types is better.
+                    const newItem = payload.new as ShoppingItem;
                     if (payload.eventType === 'INSERT') {
-                        setItems((prev) => [...prev, payload.new as ShoppingItem]);
+                        setItems((prev) => {
+                            if (prev.find(i => i.id === newItem.id)) return prev;
+                            return [...prev, newItem];
+                        });
                     } else if (payload.eventType === 'DELETE') {
                         setItems((prev) => prev.filter((i) => i.id !== payload.old.id));
                     } else if (payload.eventType === 'UPDATE') {
                         setItems((prev) =>
-                            prev.map((i) => (i.id === payload.new.id ? (payload.new as ShoppingItem) : i))
+                            prev.map((i) => (i.id === newItem.id ? newItem : i))
                         );
                     }
                 }
@@ -78,44 +86,74 @@ export default function ShoppingList({ eventId }: Props) {
         e.preventDefault();
         if (!newItemName.trim()) return;
 
+        const tempId = crypto.randomUUID();
+        const optimisticItem: ShoppingItem = {
+            id: tempId,
+            event_id: eventId,
+            item_name: newItemName,
+            quantity: newItemQty,
+            notes: newItemNotes,
+            is_bought: false,
+            claimed_by: null,
+            expense_id: null
+        };
+
+        // Optimistic update
+        setItems(prev => [...prev, optimisticItem]);
+        setNewItemName('');
+        setNewItemQty('');
+        setNewItemNotes('');
+
         try {
-            // Need user session ideally, but RLS might handle default check or fails if not logged in.
-            // Assuming user is logged in for RLS.
-            const { error } = await supabase.from('shopping_items').insert({
+            const { data, error } = await supabase.from('shopping_items').insert({
                 event_id: eventId,
-                item_name: newItemName,
-                quantity: newItemQty,
+                item_name: optimisticItem.item_name,
+                quantity: optimisticItem.quantity,
+                notes: optimisticItem.notes,
                 is_bought: false
-            });
+            }).select().single();
 
             if (error) throw error;
-            setNewItemName('');
-            setNewItemQty('');
+
+            // Replace temp item with real one
+            setItems(prev => prev.map(i => i.id === tempId ? data : i));
         } catch (error) {
             console.error('Error adding item:', error);
-            alert('Errore aggiunta oggetto. Sei loggato?');
+            alert('Errore aggiunta oggetto.');
+            // Revert optimistic add
+            setItems(prev => prev.filter(i => i.id !== tempId));
         }
     }
 
     async function toggleBought(item: ShoppingItem) {
+        // Optimistic update
+        const updatedItem = { ...item, is_bought: !item.is_bought };
+        setItems(prev => prev.map(i => i.id === item.id ? updatedItem : i));
+
         try {
             const { error } = await supabase
                 .from('shopping_items')
-                .update({ is_bought: !item.is_bought })
+                .update({ is_bought: updatedItem.is_bought })
                 .eq('id', item.id);
 
             if (error) throw error;
         } catch (error) {
             console.error('Error updating item:', error);
+            // Revert on error
+            setItems(prev => prev.map(i => i.id === item.id ? item : i));
         }
     }
 
     async function deleteItem(id: string) {
+        const previousItems = items;
+        setItems(prev => prev.filter(i => i.id !== id));
+
         try {
             const { error } = await supabase.from('shopping_items').delete().eq('id', id);
             if (error) throw error;
         } catch (error) {
             console.error("Error deleting item:", error);
+            setItems(previousItems);
         }
     }
 
@@ -157,11 +195,16 @@ export default function ShoppingList({ eventId }: Props) {
                                 {item.is_bought && <Check className="w-3.5 h-3.5" />}
                             </button>
                             <div className={item.is_bought ? "line-through text-gray-400" : ""}>
-                                <span className="font-medium">{item.item_name}</span>
-                                {item.quantity && (
-                                    <span className="ml-2 text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                                        {item.quantity}
-                                    </span>
+                                <div className="flex items-center">
+                                    <span className="font-medium">{item.item_name}</span>
+                                    {item.quantity && (
+                                        <span className="ml-2 text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                                            {item.quantity}
+                                        </span>
+                                    )}
+                                </div>
+                                {item.notes && (
+                                    <p className="text-xs text-gray-500 mt-0.5">{item.notes}</p>
                                 )}
                             </div>
                         </div>
@@ -182,29 +225,40 @@ export default function ShoppingList({ eventId }: Props) {
                 )}
             </div>
 
-            <form onSubmit={addItem} className="flex gap-2 border-t pt-4">
-                <input
-                    type="text"
-                    placeholder="Cosa serve?"
-                    value={newItemName}
-                    onChange={(e) => setNewItemName(e.target.value)}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-                />
-                <input
-                    type="text"
-                    placeholder="Qt."
-                    value={newItemQty}
-                    onChange={(e) => setNewItemQty(e.target.value)}
-                    className="w-20 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-                />
-                <button
-                    type="submit"
-                    disabled={!newItemName.trim()}
-                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
-                >
-                    <Plus className="w-5 h-5" />
-                    <span className="hidden sm:inline">Aggiungi</span>
-                </button>
+            <form onSubmit={addItem} className="flex flex-col gap-2 border-t pt-4">
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        placeholder="Cosa serve?"
+                        value={newItemName}
+                        onChange={(e) => setNewItemName(e.target.value)}
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Qt."
+                        value={newItemQty}
+                        onChange={(e) => setNewItemQty(e.target.value)}
+                        className="w-20 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                    />
+                </div>
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        placeholder="Note (opzionale)"
+                        value={newItemNotes}
+                        onChange={(e) => setNewItemNotes(e.target.value)}
+                        className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                    />
+                    <button
+                        type="submit"
+                        disabled={!newItemName.trim()}
+                        className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2 whitespace-nowrap"
+                    >
+                        <Plus className="w-5 h-5" />
+                        Aggiungi
+                    </button>
+                </div>
             </form>
         </div>
     );
