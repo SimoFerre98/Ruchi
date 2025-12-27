@@ -1,0 +1,22 @@
+{
+    "name": "Ruchi - Eventi & Spese",
+    "short_name": "Ruchi",
+    "description": "Gestisci i tuoi eventi e dividi le spese in modo semplice.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#4f46e5",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/logo.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/logo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

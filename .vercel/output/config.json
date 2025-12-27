@@ -28,6 +28,18 @@
 			"dest": "_render"
 		},
 		{
+			"src": "^/login/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/profile/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/signup/?$",
+			"dest": "_render"
+		},
+		{
 			"src": "^/$",
 			"dest": "_render"
 		}
