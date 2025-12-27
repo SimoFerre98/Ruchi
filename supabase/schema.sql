@@ -19,7 +19,8 @@ create table public.participants (
   event_id uuid references public.events(id) on delete cascade not null,
   user_id uuid references public.profiles(id) not null,
   role text default 'member', -- 'admin', 'member'
-  joined_at timestamp with time zone default timezone('utc'::text, now()) unique(event_id, user_id)
+  joined_at timestamp with time zone default timezone('utc'::text, now()),
+  unique(event_id, user_id)
 );
 
 create table public.shopping_items (

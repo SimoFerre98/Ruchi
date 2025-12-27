@@ -12,6 +12,7 @@ interface Event {
 export default function DashboardView() {
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [isCreating, setIsCreating] = useState(false);
     const [newEventTitle, setNewEventTitle] = useState('');
 
@@ -21,6 +22,7 @@ export default function DashboardView() {
 
     async function fetchEvents() {
         try {
+            setError(null); // Clear any previous errors
             const user = await supabase.auth.getUser();
             if (!user.data.user) {
                 // For demo purposes, if no user, maybe we prompt login or showed mocked data? 
@@ -31,15 +33,16 @@ export default function DashboardView() {
 
             // We need to fetch events where user is creator or participant
             // Our RLS allows select if we are creator or participant.
-            const { data, error } = await supabase
+            const { data, error: fetchError } = await supabase
                 .from('events')
                 .select('*')
                 .order('created_at', { ascending: false });
 
-            if (error) throw error;
+            if (fetchError) throw fetchError;
             setEvents(data || []);
-        } catch (error) {
-            console.error('Error fetching events:', error);
+        } catch (err: any) {
+            console.error('Error fetching events:', err);
+            setError(err.message || 'Errore di caricamento eventi');
         } finally {
             setLoading(false);
         }
@@ -97,9 +100,9 @@ export default function DashboardView() {
             setNewEventTitle('');
             // Optional: redirect immediately
             // window.location.href = `/event/${event.id}`;
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error creating event:", error);
-            alert("Errore creazione evento. Controlla la console.");
+            alert(`Errore creazione evento: ${error.message || JSON.stringify(error)}`);
         } finally {
             setIsCreating(false);
         }
@@ -133,6 +136,12 @@ export default function DashboardView() {
                 <div className="p-12 text-center text-gray-500 flex flex-col items-center gap-4">
                     <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
                     <p>Caricamento eventi...</p>
+                </div>
+            ) : error ? (
+                <div className="p-12 text-center text-red-500 bg-red-50 rounded-xl border border-red-100">
+                    <p className="font-bold">Errore di connessione</p>
+                    <p className="text-sm">{error}</p>
+                    <p className="text-xs text-gray-500 mt-2">Controlla la console e il file .env</p>
                 </div>
             ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
