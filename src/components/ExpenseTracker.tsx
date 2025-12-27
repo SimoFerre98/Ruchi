@@ -40,7 +40,9 @@ const CATEGORIES = [
     { id: 'cibo', label: 'Cibo & Spesa', color: '#10B981' }, // Emerald 500
     { id: 'trasporti', label: 'Trasporti', color: '#3B82F6' }, // Blue 500
     { id: 'alloggio', label: 'Alloggio', color: '#8B5CF6' }, // Violet 500
-    { id: 'svago', label: 'Svago & Alcol', color: '#F59E0B' }, // Amber 500
+    { id: 'attivita', label: 'Attività & Cultura', color: '#06b6d4' }, // Cyan 500
+    { id: 'svago', label: 'Svago & Nightlife', color: '#F59E0B' }, // Amber 500
+    { id: 'regali', label: 'Regali', color: '#ec4899' }, // Pink 500
     { id: 'rimborso', label: 'Rimborso', color: '#EF4444' }, // Red 500
     { id: 'altro', label: 'Altro', color: '#6B7280' }, // Gray 500
 ];
@@ -506,7 +508,7 @@ export default function ExpenseTracker({ eventId }: Props) {
                                         value={description}
                                         onChange={e => setDescription(e.target.value)}
                                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white"
-                                        placeholder="Cosa hai comprato?"
+                                        placeholder="Descrizione"
                                     />
                                 </div>
                                 <div className="col-span-2 md:col-span-1">

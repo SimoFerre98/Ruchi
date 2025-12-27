@@ -2,7 +2,7 @@ import { useState } from 'react';
 import ShoppingList from './ShoppingList';
 import ExpenseTracker from './ExpenseTracker';
 import EventSettings from './EventSettings';
-import { ShoppingCart, Wallet, Settings } from 'lucide-react';
+import { ListChecks, Wallet, Settings } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface Props {
@@ -22,8 +22,8 @@ export default function EventView({ eventId }: Props) {
                         activeTab === 'shopping' ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-tl-xl"
                     )}
                 >
-                    <ShoppingCart className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                    Lista Spesa
+                    <ListChecks className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                    Lista
                     {activeTab === 'shopping' && (
                         <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600" />
                     )}

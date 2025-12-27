@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Trash2, Plus, Check, ShoppingCart, Loader2 } from 'lucide-react';
+import { Trash2, Plus, Check, ListChecks, Loader2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface ShoppingItem {
@@ -212,11 +212,11 @@ export default function ShoppingList({ eventId }: Props) {
         <div className="w-full max-w-2xl mx-auto bg-white rounded-lg shadow-sm border border-gray-100 p-4">
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
-                    <ShoppingCart className="w-5 h-5 text-indigo-600" />
-                    Lista Spesa
+                    <ListChecks className="w-5 h-5 text-indigo-600" />
+                    Lista
                 </h2>
                 <span className="text-sm text-gray-400">
-                    {items.filter(i => i.is_bought).length}/{items.length} presi
+                    {items.filter(i => i.is_bought).length}/{items.length} completati
                 </span>
             </div>
 
@@ -318,7 +318,7 @@ export default function ShoppingList({ eventId }: Props) {
 
                 {items.length === 0 && (
                     <p className="text-center text-gray-400 py-8 italic">
-                        Nessun oggetto in lista. Aggiungi qualcosa!
+                        La lista è vuota. Aggiungi elementi!
                     </p>
                 )}
             </div>
@@ -331,7 +331,7 @@ export default function ShoppingList({ eventId }: Props) {
                             type="text"
                             value={newItemName}
                             onChange={(e) => setNewItemName(e.target.value)}
-                            placeholder="Cosa serve?"
+                            placeholder="Aggiungi elemento..."
                             className="flex-[2] px-4 py-3 bg-gray-50 dark:bg-gray-800 border-none rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white placeholder-gray-400"
                             onKeyDown={(e) => e.key === 'Enter' && addItem(e)}
                         />
