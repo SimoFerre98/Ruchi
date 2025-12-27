@@ -1,6 +1,6 @@
-import { e as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_CZTop7a8.mjs';
+import { e as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_knHkETCx.mjs';
 import 'piccolore';
-import { $ as $$Layout } from '../chunks/Layout_mZ6eLEod.mjs';
+import { $ as $$Layout } from '../chunks/Layout_hBNIOAGi.mjs';
 import { jsxs, jsx } from 'react/jsx-runtime';
 import { useState, useEffect } from 'react';
 import { s as supabase } from '../chunks/supabase_Be3T3tq4.mjs';
